@@ -12,8 +12,8 @@
 char *compute_get_request(char *host, char *url, char *query_params,
 							char **cookies, int cookies_count)
 {
-	char *message = calloc(BUFLEN, sizeof(char));
-	char *line = calloc(LINELEN, sizeof(char));
+	char *message = (char *)calloc(BUFLEN, sizeof(char));
+    char *line = (char *)calloc(LINELEN, sizeof(char));
 
 	// Step 1: write the method name, URL, request params (if any) and protocol type
 	if (query_params != NULL) {
@@ -51,9 +51,9 @@ char *compute_get_request(char *host, char *url, char *query_params,
 char *compute_post_request(char *host, char *url, char* content_type, char **body_data,
 							int body_data_fields_count, char **cookies, int cookies_count)
 {
-	char *message = calloc(BUFLEN, sizeof(char));
-	char *line = calloc(LINELEN, sizeof(char));
-	char *body_data_buffer = calloc(LINELEN, sizeof(char));
+	char *message = (char *)calloc(BUFLEN, sizeof(char));
+    char *line = (char *)calloc(LINELEN, sizeof(char));
+    char *body_data_buffer = (char *)calloc(LINELEN, sizeof(char));
 
 	// Step 1: write the method name, URL and protocol type
 	sprintf(line, "POST %s HTTP/1.1", url);

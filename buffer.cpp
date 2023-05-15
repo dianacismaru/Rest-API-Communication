@@ -28,9 +28,9 @@ int buffer_is_empty(buffer *buffer)
 void buffer_add(buffer *buffer, const char *data, size_t data_size)
 {
     if (buffer->data != NULL) {
-        buffer->data = realloc(buffer->data, (buffer->size + data_size) * sizeof(char));
+        buffer->data = (char*)realloc(buffer->data, (buffer->size + data_size) * sizeof(char));
     } else {
-        buffer->data = calloc(data_size, sizeof(char));
+        buffer->data = (char*)calloc(data_size, sizeof(char));
     }
 
     memcpy(buffer->data + buffer->size, data, data_size);
