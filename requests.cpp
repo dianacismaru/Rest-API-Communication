@@ -9,8 +9,8 @@
 #include "helpers.h"
 #include "requests.h"
 
-char *compute_get_request(char *host, char *url, char *query_params,
-							char **cookies, int cookies_count)
+char *compute_get_request(const char *host, const char *url, char *query_params,
+							char **cookies, int cookies_count, char *token)
 {
 	char *message = (char *)calloc(BUFLEN, sizeof(char));
     char *line = (char *)calloc(LINELEN, sizeof(char));
@@ -29,6 +29,13 @@ char *compute_get_request(char *host, char *url, char *query_params,
 	compute_message(message, line);
 
 	// Step 3 (optional): add headers and/or cookies, according to the protocol format
+	if (token) {
+        memset(line, 0, LINELEN);
+        strcat(line, "Authorization: Bearer ");
+        strcat(line, token);
+		compute_message(message, line);
+    }
+
 	if (cookies != NULL) {
 		memset(line, 0, LINELEN);
 		strcat(line, "Cookie: ");
@@ -48,8 +55,10 @@ char *compute_get_request(char *host, char *url, char *query_params,
 	return message;
 }
 
-char *compute_post_request(char *host, char *url, char* content_type, char **body_data,
-							int body_data_fields_count, char **cookies, int cookies_count)
+char *compute_post_request(const char *host, const char *url,
+						   const char* content_type, char **body_data,
+						   int body_data_fields_count, char **cookies,
+						   int cookies_count, char *token)
 {
 	char *message = (char *)calloc(BUFLEN, sizeof(char));
     char *line = (char *)calloc(LINELEN, sizeof(char));
@@ -66,6 +75,13 @@ char *compute_post_request(char *host, char *url, char* content_type, char **bod
 	/* Step 3: add necessary headers (Content-Type and Content-Length are mandatory)
 			in order to write Content-Length you must first compute the message size
 	*/
+	if (token) {
+        memset(line, 0, LINELEN);
+        strcat(line, "Authorization: Bearer ");
+        strcat(line, token);
+		compute_message(message, line);
+    }
+	
 	sprintf(line, "Content-Type: %s", content_type);
 	compute_message(message, line);
 

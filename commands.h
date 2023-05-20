@@ -4,13 +4,13 @@
 
 #include "client.h"
 
-extern void register_account();
-extern void login();
-extern void enter_library();
-extern void get_books();
-extern void get_book();
-extern void add_book();
-extern void delete_book();
-extern void logout();
+extern void register_account(int sockfd);
+extern void login(int sockfd, char *current_cookie);
+extern void enter_library(int sockfd, char *current_cookie, char *jwt_token);
+extern void get_books(int sockfd, char *current_cookie, char *jwt_token);
+extern void get_book(int sockfd, char *current_cookie, char *jwt_token);
+extern void add_book(int sockfd, char *current_cookie, char *jwt_token);
+extern void delete_book(int sockfd, char *current_cookie, char *jwt_token);
+extern void logout(int sockfd, char *current_cookie, char *jwt_token);
 
 #endif  // COMMANDS_H_

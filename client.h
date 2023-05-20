@@ -3,9 +3,11 @@
 #define CLIENT_H_
 
 // Maximum size of a command
-#define CMAX 12
+#define CMAX 20
 
 #define INVALID_COMMAND "The given command does not exist. Try again!\n"
+
+#define NMAX 100
 
 // Libraries
 #include <stdio.h>      /* printf, sprintf */
@@ -16,10 +18,15 @@
 #include <netinet/in.h> /* struct sockaddr_in, struct sockaddr */
 #include <netdb.h>      /* struct hostent, gethostbyname */
 #include <arpa/inet.h>
+#include <iostream>
 
 // Headers
 #include "helpers.h"
 #include "requests.h"
 #include "commands.h"
+#include "nlohmann/json.hpp"
+
+using json = nlohmann::json;
+using namespace std;
 
 #endif  // CLIENT_H_
