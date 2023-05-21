@@ -10,16 +10,25 @@
 #include "requests.h"
 
 char *compute_get_request(const char *host, const char *url, char *query_params,
-							char **cookies, int cookies_count, char *token)
+							char **cookies, int cookies_count, char *token, int type)
 {
 	char *message = (char *)calloc(BUFLEN, sizeof(char));
     char *line = (char *)calloc(LINELEN, sizeof(char));
 
 	// Step 1: write the method name, URL, request params (if any) and protocol type
-	if (query_params != NULL) {
-		sprintf(line, "GET %s?%s HTTP/1.1", url, query_params);
+	if (type == 0) {
+		if (query_params != NULL) {
+			sprintf(line, "GET %s?%s HTTP/1.1", url, query_params);
+		} else {
+			sprintf(line, "GET %s HTTP/1.1", url);
+		}
 	} else {
-		sprintf(line, "GET %s HTTP/1.1", url);
+		// If type is other than 0, compute a DELETE request
+		if (query_params != NULL) {
+			sprintf(line, "DELETE %s?%s HTTP/1.1", url, query_params);
+		} else {
+			sprintf(line, "DELETE %s HTTP/1.1", url);
+		}
 	}
 
 	compute_message(message, line);

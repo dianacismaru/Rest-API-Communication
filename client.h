@@ -26,7 +26,7 @@
 #include "commands.h"
 #include "nlohmann/json.hpp"
 
-using json = nlohmann::json;
+using JSON = nlohmann::json;
 using namespace std;
 
 #endif  // CLIENT_H_

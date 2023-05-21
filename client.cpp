@@ -49,8 +49,9 @@ int main(int argc, char *argv[]) {
 		} else {
 			printf(INVALID_COMMAND);
 		}
+
+		close_connection(sockfd);
 	}
 
-	close_connection(sockfd);
 	return 0;
 }

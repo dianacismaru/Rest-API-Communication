@@ -25,4 +25,7 @@ char *receive_from_server(int sockfd);
 // extracts and returns a JSON from a server response
 char *basic_extract_json_response(char *str);
 
+// check if a string is a valid number
+bool isNumber(char *string);
+
 #endif

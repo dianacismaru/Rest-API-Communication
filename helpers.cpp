@@ -129,3 +129,16 @@ char *basic_extract_json_response(char *str)
 {
     return strstr(str, "{\"");
 }
+
+bool isNumber(char *string) {
+
+    int len = strlen(string);
+
+    for (int i = 0; i < len; i++) {
+        if (!isdigit(string[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
