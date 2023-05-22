@@ -8,7 +8,7 @@ char jwt_token[LINELEN];
 int main(int argc, char *argv[]) {
 	char command[CMAX];
 
-	// Read the command
+	// Read the commands
 	while (1) {
 		sockfd = open_connection(HOST, PORT, AF_INET, SOCK_STREAM, 0);
 		if (sockfd < 0) {

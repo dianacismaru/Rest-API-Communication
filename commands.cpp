@@ -21,6 +21,7 @@ void register_account(int sockfd) {
     j["username"] = username;
     j["password"] = password;
 
+    // Add JSON object as body data to the post request
     string jsonString = j.dump();
     char *string = (char *)malloc(jsonString.length());
     strcpy(string, jsonString.c_str());
@@ -29,11 +30,13 @@ void register_account(int sockfd) {
     char *request = compute_post_request("34.254.242.81", "/api/v1/tema/auth/register",
                                          "application/JSON", body_data, 1, NULL, 0, NULL);
     send_to_server(sockfd, request);
+
     free(request);
     free(string);
 
     char *response = receive_from_server(sockfd);
 
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
@@ -83,6 +86,7 @@ void login(int sockfd, char *current_cookie) {
 
     char *response = receive_from_server(sockfd);
 
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
@@ -99,6 +103,7 @@ void login(int sockfd, char *current_cookie) {
             memset(current_cookie, 0, strlen(current_cookie));
         }
 
+        // Update the session cookie
         strncpy(current_cookie, cookie, cookie_size);
 
     } else if (!strcmp(code, "400")) {
@@ -111,6 +116,7 @@ void login(int sockfd, char *current_cookie) {
 }
 
 void enter_library(int sockfd, char *current_cookie, char *jwt_token) {
+    // Library access is allowed only if the user is connected to the server
     if (!strlen(current_cookie)) {
         cout << "You are not logged in.\n";
         return;
@@ -120,15 +126,19 @@ void enter_library(int sockfd, char *current_cookie, char *jwt_token) {
     char *request = compute_get_request("34.254.242.81", "/api/v1/tema/library/access",
                                          NULL, body_data, 1, NULL, 0);
     send_to_server(sockfd, request);
+
     free(request);
 
     char *response = receive_from_server(sockfd);
     
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
     if (!strcmp(code, "201") || !strcmp(code, "200")) {
         cout << "200 - Entered library successfully!\n";
+
+        // Get the JWT token from server response
         char *json_response = basic_extract_json_response(response);
         strcpy(jwt_token, json_response);
 
@@ -142,24 +152,29 @@ void enter_library(int sockfd, char *current_cookie, char *jwt_token) {
 }
 
 void get_books(int sockfd, char *current_cookie, char *jwt_token) {
+    // Books preview is allowed only if the user is connected to the server
     if (!strlen(current_cookie)) {
         cout << "You are not logged in.\n";
         return;
     }
 
+    // Books preview is allowed only if the user has entered the library
     if (!strlen(jwt_token)) {
         cout << "You don't have access to the library.\n";
         return;
     }
 
+    // Get the value of the JWT token and add it to the Authorization header
     JSON j = JSON::parse(jwt_token);
     string token_string = j["token"];
+
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
     char *request = compute_get_request("34.254.242.81", "/api/v1/tema/library/books",
                                          NULL, NULL, 0, token, 0);
     send_to_server(sockfd, request);
+
     free(request);
 
     char *response = receive_from_server(sockfd);
@@ -176,38 +191,48 @@ void get_books(int sockfd, char *current_cookie, char *jwt_token) {
 }
 
 void get_book(int sockfd, char *current_cookie, char *jwt_token) {
+    // Read the book's ID
     char id[NMAX];
     cout << "id=";
     cin.getline(id, NMAX);
 
+    // Book preview is allowed only if the user is connected to the server
     if (!strlen(current_cookie)) {
         cout << "You are not logged in.\n";
         return;
     }
 
+    // Book preview is allowed only if the user has entered the library
     if (!strlen(jwt_token)) {
         cout << "You don't have access to the library.\n";
         return;
     }
 
+    // The introduced ID has to be a valid number
     if (!isNumber(id)) {
         cout << "ID is not valid.\n";
         return;
     }
 
+    // Get the value of the JWT token and add it to the Authorization header
     JSON j = JSON::parse(jwt_token);
     string token_string = j["token"];
+    
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
+    // Compute the URL corresponding the requested book
     char url[NMAX] = "/api/v1/tema/library/books/";
     strcat(url, id);
+
     char *request = compute_get_request("34.254.242.81", url, NULL, NULL, 0, token, 0);
     send_to_server(sockfd, request);
+
     free(request);
 
     char *response = receive_from_server(sockfd);
 
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
@@ -215,6 +240,7 @@ void get_book(int sockfd, char *current_cookie, char *jwt_token) {
         char *json_response = basic_extract_json_response(response);
         j = JSON::parse(json_response);
 
+        // Print the book in JSON format
         cout << "The requested book is:\n";
         cout << j.dump(8) << endl;
         
@@ -228,17 +254,21 @@ void get_book(int sockfd, char *current_cookie, char *jwt_token) {
 }
 
 void add_book(int sockfd, char *current_cookie, char *jwt_token) {
+    // Library changes are allowed only if the user is connected to the server
     if (!strlen(current_cookie)) {
         cout << "You are not logged in.\n";
         return;
     }
-    
+
+    // Library changes are allowed only if the user has entered the library
     if (!strlen(jwt_token)) {
         cout << "You don't have access to the library.\n";
         return;
     }
 
+    // Read the book's data
     char title[NMAX], author[NMAX], genre[NMAX], page_count_string[NMAX], publisher[NMAX];
+
     cout << "title=";
     cin.getline(title, NMAX);
 
@@ -276,13 +306,16 @@ void add_book(int sockfd, char *current_cookie, char *jwt_token) {
     JSON j = {{"title", title}, {"author", author}, {"genre", genre},
               {"page_count", page_count}, {"publisher", publisher}};
 
+    // Add JSON object as body data to the post request
     string jsonString = j.dump();
     char *book = (char *)malloc(jsonString.length());
     strcpy(book, jsonString.c_str());
     char *body_data[] = {book};
 
+    // Get the value of the JWT token and add it to the Authorization header
     j = JSON::parse(jwt_token);
     string token_string = j["token"];
+
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
@@ -290,10 +323,12 @@ void add_book(int sockfd, char *current_cookie, char *jwt_token) {
                                          "application/JSON", body_data, 1, NULL, 0, token);
 
     send_to_server(sockfd, request);
+
     free(request);
 
     char *response = receive_from_server(sockfd);
 
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
@@ -307,38 +342,48 @@ void add_book(int sockfd, char *current_cookie, char *jwt_token) {
 }
 
 void delete_book(int sockfd, char *current_cookie, char *jwt_token) {
+    // Read the book's ID
     char id[NMAX];
     cout << "id=";
     cin.getline(id, NMAX);
 
+    // Library changes are allowed only if the user is connected to the server
     if (!strlen(current_cookie)) {
         cout << "You are not logged in.\n";
         return;
     }
 
+    // Library changes are allowed only if the user has entered the library
     if (!strlen(jwt_token)) {
         cout << "You don't have access to the library.\n";
         return;
     }
 
+    // The introduced ID has to be a valid number
     if (!isNumber(id)) {
         cout << "ID is not valid.\n";
         return;
     }
 
+    // Get the value of the JWT token and add it to the Authorization header
     JSON j = JSON::parse(jwt_token);
     string token_string = j["token"];
+
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
+    // Compute the URL corresponding the requested book
     char url[NMAX] = "/api/v1/tema/library/books/";
     strcat(url, id);
+
     char *request = compute_get_request("34.254.242.81", url, NULL, NULL, 0, token, 1);
     send_to_server(sockfd, request);
+
     free(request);
 
     char *response = receive_from_server(sockfd);
 
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
@@ -358,15 +403,19 @@ void logout(int sockfd, char *current_cookie, char *jwt_token) {
     char *request = compute_get_request("34.254.242.81", "/api/v1/tema/auth/logout",
                                          NULL, body_data, 1, NULL, 0);
     send_to_server(sockfd, request);
+    
     free(request);
 
     char *response = receive_from_server(sockfd);
     
+    // Get the status code
     char code[4];
     strncpy(code, response + 9, 3);
 
     if (!strcmp(code, "201") || !strcmp(code, "200")) {
         cout << "200 - Logged out successfully!\n";
+        
+        // Reset the session cookie and the token
         memset(current_cookie, 0, strlen(current_cookie));
         memset(jwt_token, 0, strlen(jwt_token));
 

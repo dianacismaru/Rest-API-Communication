@@ -15,7 +15,7 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
 	char *message = (char *)calloc(BUFLEN, sizeof(char));
     char *line = (char *)calloc(LINELEN, sizeof(char));
 
-	// Step 1: write the method name, URL, request params (if any) and protocol type
+	// Write the method name, URL, request params (if any) and protocol type
 	if (type == 0) {
 		if (query_params != NULL) {
 			sprintf(line, "GET %s?%s HTTP/1.1", url, query_params);
@@ -33,11 +33,11 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
 
 	compute_message(message, line);
 
-	// Step 2: add the host
+	// Add the host
 	sprintf(line, "Host: %s", host);
 	compute_message(message, line);
 
-	// Step 3 (optional): add headers and/or cookies, according to the protocol format
+	// Add headers and/or cookies, according to the protocol format
 	if (token) {
         memset(line, 0, LINELEN);
         strcat(line, "Authorization: Bearer ");
@@ -58,7 +58,6 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
 		compute_message(message, line);
 	}
 
-	// Step 4: add final new line
 	compute_message(message, "");
 	free(line);
 	return message;
@@ -73,17 +72,15 @@ char *compute_post_request(const char *host, const char *url,
     char *line = (char *)calloc(LINELEN, sizeof(char));
     char *body_data_buffer = (char *)calloc(LINELEN, sizeof(char));
 
-	// Step 1: write the method name, URL and protocol type
+	// Write the method name, URL and protocol type
 	sprintf(line, "POST %s HTTP/1.1", url);
 	compute_message(message, line);
 	
-	// Step 2: add the host
+	// Add the host
 	sprintf(line, "Host: %s", host);
 	compute_message(message, line);
 
-	/* Step 3: add necessary headers (Content-Type and Content-Length are mandatory)
-			in order to write Content-Length you must first compute the message size
-	*/
+	// Add necessary headers (Content-Type and Content-Length are mandatory)
 	if (token) {
         memset(line, 0, LINELEN);
         strcat(line, "Authorization: Bearer ");
@@ -105,7 +102,7 @@ char *compute_post_request(const char *host, const char *url,
 	sprintf(line, "Content-Length: %lu", strlen(body_data_buffer));
 	compute_message(message, line);
 
-	// Step 4 (optional): add cookies
+	// Add cookies
 	if (cookies != NULL) {
 		memset(line, 0, LINELEN);
 		strcat(line, "Cookie: ");
@@ -119,10 +116,10 @@ char *compute_post_request(const char *host, const char *url,
 		compute_message(message, line);
 	}
 
-	// Step 5: add new line at end of header
+	// Add new line at end of header
 	compute_message(message, "");
 
-	// Step 6: add the actual payload data
+	// Add the actual payload data
 	memset(line, 0, LINELEN);
 	strcat(message, body_data_buffer);
 
