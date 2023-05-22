@@ -7,18 +7,17 @@ char jwt_token[LINELEN];
 
 int main(int argc, char *argv[]) {
 	char command[CMAX];
-	char host[] = "34.254.242.81";
 
 	// Read the command
 	while (1) {
-		sockfd = open_connection(host, 8080, AF_INET, SOCK_STREAM, 0);
+		sockfd = open_connection(HOST, PORT, AF_INET, SOCK_STREAM, 0);
 		if (sockfd < 0) {
 			return -1;
 		}
+
 		cout << "\n";
 		cin.getline(command, CMAX);
 
-		// Check if the command is valid
 		if (!strcmp(command, "exit")) {
 			break;
 

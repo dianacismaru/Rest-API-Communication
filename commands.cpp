@@ -212,11 +212,12 @@ void get_book(int sockfd, char *current_cookie, char *jwt_token) {
     strncpy(code, response + 9, 3);
 
     if (!strcmp(code, "201") || !strcmp(code, "200")) {
-        cout << "The requested book is:\n";
         char *json_response = basic_extract_json_response(response);
         j = JSON::parse(json_response);
-        cout << j.dump(8) << endl;
 
+        cout << "The requested book is:\n";
+        cout << j.dump(8) << endl;
+        
     } else if (!strcmp(code, "404")) {
         cout << "404 - Invalid ID. No book was found.\n";
     } else {
@@ -257,12 +258,14 @@ void add_book(int sockfd, char *current_cookie, char *jwt_token) {
     if (!strlen(title) || !strlen(author) || !strlen(genre) ||
         !strlen(publisher) || !strlen(page_count_string)) {
         cout << "You can't leave empty fields!\n";
+        cout << "The book was not added.\n";
         return;
     }
 
     // Page count verification
     if (!isNumber(page_count_string)) {
         cout << "Invalid page count!\n";
+        cout << "The book was not added.\n";
         return;
     }
 

@@ -1,8 +1,11 @@
 #ifndef _HELPERS_
 #define _HELPERS_
 
+// Maximum size of a command
+#define CMAX 20
 #define BUFLEN 4096
 #define LINELEN 1000
+#define NMAX 100
 
 // shows the current error
 void error(const char *msg);
@@ -11,7 +14,7 @@ void error(const char *msg);
 void compute_message(char *message, const char *line);
 
 // opens a connection with server host_ip on port portno, returns a socket
-int open_connection(char *host_ip, int portno, int ip_type, int socket_type, int flag);
+int open_connection(const char *host_ip, int portno, int ip_type, int socket_type, int flag);
 
 // closes a server connection on socket sockfd
 void close_connection(int sockfd);

@@ -2,12 +2,11 @@
 #ifndef CLIENT_H_
 #define CLIENT_H_
 
-// Maximum size of a command
-#define CMAX 20
-
 #define INVALID_COMMAND "The given command does not exist. Try again!\n"
 
-#define NMAX 100
+#define HOST "34.254.242.81"
+
+#define PORT 8080
 
 // Libraries
 #include <stdio.h>      /* printf, sprintf */
