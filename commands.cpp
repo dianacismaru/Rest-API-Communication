@@ -27,8 +27,8 @@ void register_account(int sockfd) {
     strcpy(string, jsonString.c_str());
     char *body_data[] = {string};
 
-    char *request = compute_post_request("34.254.242.81", "/api/v1/tema/auth/register",
-                                         "application/JSON", body_data, 1, NULL, 0, NULL);
+    char *request = compute_post_request(HOST, "/api/v1/tema/auth/register",
+                                         "application/json", body_data, 1, NULL, 0, NULL);
     send_to_server(sockfd, request);
 
     free(request);
@@ -77,8 +77,8 @@ void login(int sockfd, char *current_cookie) {
     strcpy(string, jsonString.c_str());
     char *body_data[] = {string};
 
-    char *request = compute_post_request("34.254.242.81", "/api/v1/tema/auth/login",
-                                         "application/JSON", body_data, 1, NULL, 0, NULL);
+    char *request = compute_post_request(HOST, "/api/v1/tema/auth/login",
+                                         "application/json", body_data, 1, NULL, 0, NULL);
     send_to_server(sockfd, request);
 
     free(request);
@@ -123,7 +123,7 @@ void enter_library(int sockfd, char *current_cookie, char *jwt_token) {
     }
 
     char *body_data[] = {current_cookie};
-    char *request = compute_get_request("34.254.242.81", "/api/v1/tema/library/access",
+    char *request = compute_get_request(HOST, "/api/v1/tema/library/access",
                                          NULL, body_data, 1, NULL, 0);
     send_to_server(sockfd, request);
 
@@ -171,7 +171,7 @@ void get_books(int sockfd, char *current_cookie, char *jwt_token) {
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
-    char *request = compute_get_request("34.254.242.81", "/api/v1/tema/library/books",
+    char *request = compute_get_request(HOST, "/api/v1/tema/library/books",
                                          NULL, NULL, 0, token, 0);
     send_to_server(sockfd, request);
 
@@ -225,7 +225,7 @@ void get_book(int sockfd, char *current_cookie, char *jwt_token) {
     char url[NMAX] = "/api/v1/tema/library/books/";
     strcat(url, id);
 
-    char *request = compute_get_request("34.254.242.81", url, NULL, NULL, 0, token, 0);
+    char *request = compute_get_request(HOST, url, NULL, NULL, 0, token, 0);
     send_to_server(sockfd, request);
 
     free(request);
@@ -319,8 +319,8 @@ void add_book(int sockfd, char *current_cookie, char *jwt_token) {
     char token[LINELEN];
     strcpy(token, token_string.c_str());
 
-    char *request = compute_post_request("34.254.242.81", "/api/v1/tema/library/books",
-                                         "application/JSON", body_data, 1, NULL, 0, token);
+    char *request = compute_post_request(HOST, "/api/v1/tema/library/books",
+                                         "application/json", body_data, 1, NULL, 0, token);
 
     send_to_server(sockfd, request);
 
@@ -376,7 +376,7 @@ void delete_book(int sockfd, char *current_cookie, char *jwt_token) {
     char url[NMAX] = "/api/v1/tema/library/books/";
     strcat(url, id);
 
-    char *request = compute_get_request("34.254.242.81", url, NULL, NULL, 0, token, 1);
+    char *request = compute_get_request(HOST, url, NULL, NULL, 0, token, 1);
     send_to_server(sockfd, request);
 
     free(request);
@@ -400,7 +400,7 @@ void delete_book(int sockfd, char *current_cookie, char *jwt_token) {
 
 void logout(int sockfd, char *current_cookie, char *jwt_token) {
     char *body_data[] = {current_cookie};
-    char *request = compute_get_request("34.254.242.81", "/api/v1/tema/auth/logout",
+    char *request = compute_get_request(HOST, "/api/v1/tema/auth/logout",
                                          NULL, body_data, 1, NULL, 0);
     send_to_server(sockfd, request);
     
